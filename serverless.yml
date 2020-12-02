@@ -2,7 +2,11 @@
 # S3 bucket us-east-1
 # Dynamo us-east-2
 # noteId 27e69750-347a-11eb-a0a8-199489ef4152
-# sergey-note-app-upload
+# S3 sergey-note-app-upload
+# Pool Id us-east-1_fbtpYtPhU
+# Pool ARN arn:aws:cognito-idp:us-east-1:207904706662:userpool/us-east-1_fbtpYtPhU
+# App client id 61vvus3jkas81ifo6fatvvnf2v
+# --username sergey@example.com --password Pass1234!
 service: notes-api
 
 # Create an optimized package for our functions
@@ -45,27 +49,32 @@ functions:
       - http:
           path: notes
           method: post
+          authorizer: aws_iam
   get:
     handler: get.main
     events:
       - http:
           path: notes/{id}
           method: get
+          authorizer: aws_iam
   list:
     handler: list.main
     events:
       - http:
           path: notes
           method: get
+          authorizer: aws_iam
   update:
     handler: update.main
     events:
       - http:
           path: notes/{id}
           method: put
+          authorizer: aws_iam
   delete:
     handler: delete.main
     events:
       - http:
           path: notes/{id}
           method: delete
+          authorizer: aws_iam
