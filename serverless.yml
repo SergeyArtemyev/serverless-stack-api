@@ -7,6 +7,9 @@
 # Pool ARN arn:aws:cognito-idp:us-east-1:207904706662:userpool/us-east-1_fbtpYtPhU
 # App client id 61vvus3jkas81ifo6fatvvnf2v
 # --username sergey@example.com --password Pass1234!
+# STRIPE
+# Publishable key pk_test_51HttxqLQsfnxbeU3NOCaytXVkxoYKHBbVuOZCRsjtOnqBvQG6VGcRMY4WLxYGLWuucIPsJWWJFBxTNBuYVlObhjQ00XkFbwLmq
+# Secret key sk_test_51HttxqLQsfnxbeU3eqxOeRp8Aav9ox8SQsqsDdriCC4kC5J05KWd1JqtpSQC9Eu8pI7INw2Cwn1DDB6lx8uvfmAL00ygy2LE4P
 service: notes-api
 
 # Create an optimized package for our functions
@@ -25,6 +28,7 @@ provider:
   region: us-east-1
   environment:
     tableName: notes
+    stripeSecretKey: ${env:STRIPE_SECRET_KEY}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -77,4 +81,11 @@ functions:
       - http:
           path: notes/{id}
           method: delete
+          authorizer: aws_iam
+  billing:
+    handler: billing.main
+    events:
+      - http:
+          path: billing
+          method: post
           authorizer: aws_iam
