@@ -1,4 +1,8 @@
 # NOTE: update this with your service name
+# S3 bucket us-east-1
+# Dynamo us-east-2
+# noteId 27e69750-347a-11eb-a0a8-199489ef4152
+# sergey-note-app-upload
 service: notes-api
 
 # Create an optimized package for our functions
@@ -15,18 +19,53 @@ provider:
   runtime: nodejs12.x
   stage: prod
   region: us-east-1
+  environment:
+    tableName: notes
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: 'arn:aws:dynamodb:us-east-2:207904706662:table/notes'
   # To load environment variables externally
   # rename env.example to .env and uncomment
   # the following line. Also, make sure to not
   # commit your .env.
   #
-  #environment:
-  #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
 
 functions:
-  hello:
-    handler: handler.hello
+  create:
+    handler: create.main
     events:
       - http:
-          path: hello
+          path: notes
+          method: post
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: notes/{id}
           method: get
+  list:
+    handler: list.main
+    events:
+      - http:
+          path: notes
+          method: get
+  update:
+    handler: update.main
+    events:
+      - http:
+          path: notes/{id}
+          method: put
+  delete:
+    handler: delete.main
+    events:
+      - http:
+          path: notes/{id}
+          method: delete
